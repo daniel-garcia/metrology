@@ -19,6 +19,11 @@ class TCollectorReporter(Reporter):
     :param tags: tags to use for this metric (default: host=socket.getfqdn())
     :param interval: time between each reporting
     :param prefix: metrics name prefix
+
+    #TODO: 
+       use persistent connection 
+       swallow exceptions when tsdb/network fails, log errors
+       register metrics: tsdb mkmetric {metricname}
     """
     def __init__(self, host='localhost', port=4242, tags=None, **options):
         self.host = host
