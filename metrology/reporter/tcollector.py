@@ -9,7 +9,7 @@ import socket
 
 class TCollectorReporter(Reporter):
     """
-    A logging reporter that write metrics to an OpenTSDB tcollector instance ::
+    A reporter that writes metrics to an OpenTSDB tcollector instance ::
 
       reporter = TCollectorReporter(host='localhost', port=4242, interval=10)
       reporter.start()
@@ -20,7 +20,7 @@ class TCollectorReporter(Reporter):
     :param interval: time between each reporting
     :param prefix: metrics name prefix
     """
-    def __init__(self, host, port=4242, tags=None, **options):
+    def __init__(self, host='localhost', port=4242, tags=None, **options):
         self.host = host
         self.port = port
         if tags is None:
