@@ -7,15 +7,15 @@ import time
 import socket
 
 
-class TCollectorReporter(Reporter):
+class OpenTSDBReporter(Reporter):
     """
     A reporter that writes metrics to an OpenTSDB tcollector instance ::
 
       reporter = TCollectorReporter(host='localhost', port=4242, interval=10)
       reporter.start()
 
-    :param host: tcollector host
-    :param port: tcollector port
+    :param host: tsd host
+    :param port: tsd port
     :param tags: tags to use for this metric (default: host=socket.getfqdn())
     :param interval: time between each reporting
     :param prefix: metrics name prefix
@@ -33,7 +33,7 @@ class TCollectorReporter(Reporter):
 
         self.prefix = options.get('prefix', '')
         self.tags = " ".join(["%s=%s" % (key, value) for key, value in tags.iteritems()])
-        super(TCollectorReporter, self).__init__(**options)
+        super(OpenTSDBReporter, self).__init__(**options)
 
     def write(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
