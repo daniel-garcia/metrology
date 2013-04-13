@@ -5,7 +5,9 @@ from metrology.reporter.base import Reporter
 import time
 
 import socket
+import logging
 
+LOG = logging.getLogger('metrology.reporter.opentsdb')
 
 class OpenTSDBReporter(Reporter):
     """
@@ -34,10 +36,25 @@ class OpenTSDBReporter(Reporter):
         self.prefix = options.get('prefix', '')
         self.tags = " ".join(["%s=%s" % (key, value) for key, value in tags.iteritems()])
         super(OpenTSDBReporter, self).__init__(**options)
+        self.socket = None
 
     def write(self):
-        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect((self.host, self.port))
+        try:
+            self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.socket.connect((self.host, self.port))
+            self._write()
+        except Exception as ex:
+            LOG.warn("Could not log stats: %s", ex)
+        finally:
+            if self.socket:
+               try:
+                   self.socket.close()
+               except Exception:
+                   pass
+               self.socket = None
+
+    def _write(self):
+        LOG.debug("logging stats.")
 
         for name, metric in self.registry:
             if isinstance(metric, Meter):
@@ -77,7 +94,6 @@ class OpenTSDBReporter(Reporter):
                 ], [
                     'median', 'percentile_95th'
                 ])
-        self.socket.close()
 
     def log_metric(self, name, type, metric, keys, snapshot_keys=None):
         if snapshot_keys is None:
